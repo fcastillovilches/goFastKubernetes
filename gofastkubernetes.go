@@ -119,6 +119,11 @@ func main() {
 
 		if err_command != nil {
 			fmt.Printf("Failed to execute command: %s \n", cmd_command)
+		} else {
+			fmt.Printf("Copy, Paste and Run this command: \n")
+			fmt.Printf(cmd_command)
+			fmt.Print("\n")
+
 		}
 
 	} else if i == 1 {
@@ -135,11 +140,13 @@ func main() {
 
 	} else {
 
-		cmd_command := "kubectl logs  " + lines_pod[p] + " -f " + " -n " + lines[n]
-		_, err_command := exec.Command("bash", "-c", cmd_command).Output()
+		cmd_command := "kubectl logs  " + lines_pod[p] + " -n " + lines[n]
+		stdout_command, err_command := exec.Command("bash", "-c", cmd_command).Output()
 
 		if err_command != nil {
 			fmt.Printf("Failed to execute command: %s \n", cmd_command)
+		} else {
+			fmt.Print(string(stdout_command))
 		}
 
 	}
