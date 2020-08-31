@@ -1,6 +1,10 @@
 # goFastKubernetes
 My tool for run fast options in kubernetes
 
+<p align="center">
+  <a href="https://github.com/fcastillovilches/goFastKubernetes/actions/runs/231883294"><img alt="Go Build" src="https://github.com/actions/toolkit/workflows/toolkit-unit-tests/badge.svg"></a>
+  
+
 ## Build
 
 ```bash
