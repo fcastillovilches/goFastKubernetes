@@ -13,6 +13,39 @@ func clear() {
 	c.Run()
 }
 
+func title() {
+	// fmt.Print("GOFASTKUBERNETES\n\n")
+	// basic stuff
+
+	asciiArt :=
+		`
+	####  ###    ###   #   ### #####   # ## #  # #### #### ###  #  # #### ##### #### ### 
+	##    ## ##   #    ###  #     #     # #  #  # #  # #    # #  ## # #      #   #    #   
+	#     #   #   #    # #  ##    #     ##   #  # ###  ###  # #  ## # ###    #   ###  ##  
+	#   # #   #   ###  ###   ##   #     ##   #  # # ## #    ##   # ## #      #   #     ## 
+	##  # ## ##   #   #   #   #   #     # #  #  # #  # #    # #  # ## #      #   #      # 
+	 ####  ###    #   #   # ###   #     #  # #### ###  #### #  # #  # ####   #   #### ### 
+	`
+	fmt.Println(asciiArt)
+}
+
+func opciones() {
+
+	// Crear arreglo de Opciones
+	opciones := [3]string{"exec", "describe", "logs"}
+
+	//fmt.Println(opciones)
+	//fmt.Println(len(opciones))
+	fmt.Print("Command Options\n\n")
+
+	for id_opcion, gl_opcion := range opciones {
+		fmt.Printf("Option %d - %s\n", id_opcion, gl_opcion)
+	}
+
+	fmt.Print("\n")
+	fmt.Print("Select a command option (Option Number) \n\n")
+}
+
 func delete_empty(s []string) []string {
 	var r []string
 	for _, str := range s {
@@ -27,36 +60,28 @@ func main() {
 
 	clear()
 
-	// fmt.Print("GOFASTKUBERNETES\n\n")
-	// basic stuff
-
-	asciiArt :=
-		`
-	####  ###    ###   #   ### #####   # ## #  # #### #### ###  #  # #### ##### #### ### 
-	##    ## ##   #    ###  #     #     # #  #  # #  # #    # #  ## # #      #   #    #   
-	#     #   #   #    # #  ##    #     ##   #  # ###  ###  # #  ## # ###    #   ###  ##  
-	#   # #   #   ###  ###   ##   #     ##   #  # # ## #    ##   # ## #      #   #     ## 
-	##  # ## ##   #   #   #   #   #     # #  #  # #  # #    # #  # ## #      #   #      # 
-	 ####  ###    #   #   # ###   #     #  # #### ###  #### #  # #  # ####   #   #### ### 
-	`
-	fmt.Println(asciiArt)
-	// Crear arreglo de Opciones
-	opciones := [3]string{"exec", "describe", "logs"}
-
-	//fmt.Println(opciones)
-	//fmt.Println(len(opciones))
-	fmt.Print("Command Options\n\n")
-
-	for id_opcion, gl_opcion := range opciones {
-		fmt.Printf("Option %d - %s\n", id_opcion, gl_opcion)
-	}
-
-	fmt.Print("\n")
-	fmt.Print("Select a command option (Option Number) \n\n")
-
-	// Read integer
 	var i int
-	fmt.Scanf("%d", &i)
+
+	title()
+
+	for {
+		opciones()
+
+		// Read integer
+		fmt.Scanf("%d", &i)
+		// fmt.Print(i)
+
+		if i < 3 {
+			break
+		} else {
+
+			clear()
+
+			title()
+
+			fmt.Print("Invalid Option\n\n")
+		}
+	}
 
 	clear()
 
