@@ -12,3 +12,21 @@ sudo cp gofastkubernetes /usr/bin/
 
 gofastkubernetes
 ```
+
+## Shell Script Global
+
+```bash
+sudo cp gofastkubernetes /usr/bin/
+
+gofastkubernetes
+```
+
+## Global Execute
+
+```bash
+gofastkubernetes
+```
+
+## Screenshot
+
+![Screenshot](screenshot.PNG)
