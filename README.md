@@ -29,6 +29,6 @@ sudo cp gofastkubernetes /usr/bin/
 gofastkubernetes
 ```
 
-## Screenshot
+## Screenshot v2
 
-![Screenshot](screenshot.PNG)
+![Screenshot](screenshotv2.PNG)
