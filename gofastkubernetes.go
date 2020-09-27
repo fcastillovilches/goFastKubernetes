@@ -5,7 +5,24 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+
+	"github.com/manifoldco/promptui"
 )
+
+type comando struct {
+	Name string
+	Id   int
+}
+
+type namespace struct {
+	Name string
+	Id   int
+}
+
+type pod struct {
+	Name string
+	Id   int
+}
 
 func clear() {
 	c := exec.Command("clear")
@@ -29,21 +46,41 @@ func title() {
 	fmt.Println(asciiArt)
 }
 
-func opciones() {
+func opciones() int {
 
 	// Crear arreglo de Opciones
-	opciones := [3]string{"exec", "describe", "logs"}
 
-	//fmt.Println(opciones)
-	//fmt.Println(len(opciones))
-	fmt.Print("Command Options\n\n")
-
-	for id_opcion, gl_opcion := range opciones {
-		fmt.Printf("Option %d - %s\n", id_opcion, gl_opcion)
+	comandos := []comando{
+		{Name: "exec", Id: 1},
+		{Name: "describe", Id: 2},
+		{Name: "logs", Id: 3},
 	}
 
-	fmt.Print("\n")
-	fmt.Print("Select a command option (Option Number) \n\n")
+	templates := &promptui.SelectTemplates{
+		Label:    "{{ . }}?",
+		Active:   "\U0001F527 {{ .Name | cyan }}",
+		Inactive: "  {{ .Name | cyan }} ",
+		Selected: "\U0001F527 {{ .Name | red | cyan }}",
+	}
+
+	prompt := promptui.Select{
+		Label:     "Select a command option",
+		Items:     comandos,
+		Templates: templates,
+		Size:      4,
+	}
+
+	i, _, err := prompt.Run()
+
+	if err != nil {
+		fmt.Printf("Prompt failed %v\n", err)
+		return 99 // Codigo de error
+	}
+
+	fmt.Printf("You choose number %d: %s\n", i+1, comandos[i].Name)
+
+	return i
+
 }
 
 func delete_empty(s []string) []string {
@@ -60,28 +97,15 @@ func main() {
 
 	clear()
 
+	// Var id de opcion de comando
 	var i int
+
+	// Var id de opcion de namespaces
+	var n int
 
 	title()
 
-	for {
-		opciones()
-
-		// Read integer
-		fmt.Scanf("%d", &i)
-		// fmt.Print(i)
-
-		if i < 3 {
-			break
-		} else {
-
-			clear()
-
-			title()
-
-			fmt.Print("Invalid Option\n\n")
-		}
-	}
+	i = opciones()
 
 	clear()
 
@@ -99,21 +123,47 @@ func main() {
 
 	lines := strings.Split(string(stdout_namespaces), "\n")
 
-	for id_namespaces := range delete_empty(lines) {
-		fmt.Printf("Option %d - %s  \n", id_namespaces, lines[id_namespaces])
+	// count := 1
+	// for id_namespaces := range delete_empty(lines) {
+	// 	fmt.Printf("Option %d - %s  \n", id_namespaces, lines[id_namespaces])
+	// 	count++
+	// }
+
+	templates := &promptui.SelectTemplates{
+		Label:    "{{ . }}?",
+		Active:   "\U0001F30D {{ . | cyan }}",
+		Inactive: "{{ . | cyan }}",
+		Selected: "\U0001F30D {{ . | red | cyan }}",
 	}
 
-	fmt.Print("\n")
-	fmt.Print("Select a namespace option (Option Number) \n\n")
+	prompt := promptui.Select{
+		Label:     "Select a namespace option",
+		Items:     lines,
+		Templates: templates,
+		Size:      4,
+	}
 
-	// Read integer
-	var n int
-	fmt.Scanf("%d", &n)
+	n, _, err := prompt.Run()
+
+	if err != nil {
+		fmt.Printf("Prompt failed %v\n", err)
+		return
+	}
+
+	fmt.Printf("You choose number %d: %s\n", n+1, lines[n])
+
+	// fmt.Printf("You choose number %d: %s\n", i+1, lines[i])
+
+	fmt.Print("\n")
+	// fmt.Print("Select a namespace option (Option Number) \n\n")
+
+	// // Read integer
+	// fmt.Scanf("%d", &n)
 
 	clear()
 	// log.Print(n)
 
-	fmt.Print("Pods Options (Option Number) \n\n")
+	// fmt.Print("Pods Options (Option Number) \n\n")
 
 	cmd_pods := "kubectl  get   pod  -n  " + lines[n] + " | sed -n '1!p' | cut -d ' ' -f1 "
 	stdout_pods, err_pods := exec.Command("bash", "-c", cmd_pods).Output()
@@ -124,22 +174,45 @@ func main() {
 
 	lines_pod := strings.Split(string(stdout_pods), "\n")
 
-	for id_pod := range delete_empty(lines_pod) {
-		fmt.Printf("Option %d - %s  \n", id_pod, lines_pod[id_pod])
+	// for id_pod := range delete_empty(lines_pod) {
+	// 	fmt.Printf("Option %d - %s  \n", id_pod, lines_pod[id_pod])
+	// }
+
+	templatesPod := &promptui.SelectTemplates{
+		Label:    "{{ . }}?",
+		Active:   "\U0001F588 {{ . | cyan }}",
+		Inactive: "{{ . | cyan }}",
+		Selected: "\U0001F588 {{ . | red | cyan }}",
 	}
 
-	fmt.Print("\n")
-	fmt.Print("Select a pod option\n\n")
+	promptPod := promptui.Select{
+		Label:     "Select a pod option",
+		Items:     lines_pod,
+		Templates: templatesPod,
+		Size:      4,
+	}
 
-	// Read integer
-	var p int
-	fmt.Scanf("%d", &p)
+	p, _, errPod := promptPod.Run()
+
+	if errPod != nil {
+		fmt.Printf("Prompt failed %v\n", errPod)
+		return
+	}
+
+	fmt.Printf("You choose number %d: %s\n", p+1, lines_pod[p])
+
+	// fmt.Print("\n")
+	// fmt.Print("Select a pod option\n\n")
+
+	// // Read integer
+	// var p int
+	// fmt.Scanf("%d", &p)
 
 	clear()
 
 	if i == 0 {
 
-		cmd_command := "kubectl exec -it " + lines_pod[p] + " -n " + lines[n] + " bash"
+		cmd_command := "kubectl exec -it " + lines_pod[i] + " -n " + lines[n] + " bash"
 		_, err_command := exec.Command("bash", "-c", cmd_command).Output()
 
 		if err_command != nil {
@@ -153,7 +226,7 @@ func main() {
 
 	} else if i == 1 {
 
-		cmd_command := "kubectl describe pod " + lines_pod[p] + " -n " + lines[n]
+		cmd_command := "kubectl describe pod " + lines_pod[i] + " -n " + lines[n]
 		stdout_command, err_command := exec.Command("bash", "-c", cmd_command).Output()
 
 		if err_command != nil {
